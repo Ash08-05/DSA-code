@@ -1,0 +1,101 @@
+#include <iostream>
+#include <queue>
+#include <string>
+using namespace std;
+struct Customer {
+ int id;
+ string name;
+};
+queue<Customer> normalQueue;
+queue<Customer> priorityQueue;
+void addCustomer() {
+ Customer c;
+ int type;
+ cout << "Enter customer ID: ";
+ cin >> c.id;
+ cout << "Enter customer name: ";
+ cin >> c.name;
+ cout << "Enter customer type (1-Normal, 2-Priority): ";
+ cin >> type;
+ if (type == 2) {
+ priorityQueue.push(c);
+ cout << "Priority customer added successfully." << endl;
+} 
+ else {
+ normalQueue.push(c);
+ cout << "Normal customer added successfully." << endl;
+ }
+}
+void serveCustomer() {
+ if (!priorityQueue.empty()) {
+ Customer c = priorityQueue.front();
+ priorityQueue.pop();
+ cout << "Serving priority customer: "
+ << c.id << " - " << c.name << endl;
+ }
+ else if (!normalQueue.empty()) {
+ Customer c = normalQueue.front();
+ normalQueue.pop();
+ cout << "Serving normal customer: "
+ << c.id << " - " << c.name << endl;
+ }
+ else {
+ cout << "No customers waiting." << endl;
+ }
+}
+void displayQueues() {
+ queue<Customer> temp;
+ cout << "\nPriority Queue:" << endl;
+ if (priorityQueue.empty()) {
+cout << "Empty" << endl;
+ }
+ else {
+ temp = priorityQueue;
+ while (!temp.empty()) {
+ cout << temp.front().id << " - "
+ << temp.front().name << endl;
+ temp.pop();
+ }
+ }
+ cout << "\nNormal Queue:" << endl;
+ if (normalQueue.empty()) {
+ cout << "Empty" << endl;
+ }
+ else {
+ temp = normalQueue;
+ while (!temp.empty()) {
+ cout << temp.front().id << " - "
+ << temp.front().name << endl;
+ temp.pop();
+ }
+ }
+}
+int main() {
+ int choice;
+ do {
+ cout << "\n--- Bank Queue System ---" << endl;
+ cout << "1. Add Customer" << endl;
+cout << "2. Serve Customer" << endl;
+ cout << "3. Display Queues" << endl;
+ cout << "4. Exit" << endl;
+ cout << "Enter your choice: ";
+ cin >> choice;
+ switch (choice) {
+ case 1:
+ addCustomer();
+ break;
+ case 2:
+ serveCustomer();
+ break;
+ case 3:
+ displayQueues();
+ break;
+ case 4:
+ cout << "Exiting program. Goodbye!" << endl;
+ break;
+ default:
+ cout << "Invalid choice. Please try again." << endl;
+ }
+ } while (choice != 4);
+ return 0;
+}
