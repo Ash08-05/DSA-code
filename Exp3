@@ -1,0 +1,103 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <limits>
+using namespace std;
+const int MAX = 5;
+int stack_arr[MAX];
+int top = -1;
+void push(int data) {
+ if (top == MAX - 1) {
+ cout << "Stack Overflow" << endl;
+ return;
+ }
+ top++;
+ stack_arr[top] = data;
+ cout << data << " pushed to stack." << endl;
+}
+void pop() {
+ if (top == -1) {
+ cout << "Stack Underflow" << endl;
+ return;
+ }
+ cout << stack_arr[top] << " popped from stack." << endl;
+ top--;
+}
+void display() {
+ if (top == -1) {
+ cout << "Stack is empty." << endl;
+ return;
+ }
+ cout << "Stack elements: ";
+ for (int i = top; i >= 0; i--) {
+ cout << stack_arr[i] << " ";
+}
+ cout << endl;
+}
+void checkPalindrome() {
+ string str;
+ cout << "Enter a string to check for palindrome: ";
+ cin.ignore(numeric_limits<streamsize>::max(), '\n');
+ getline(cin, str);
+ string reversed_str = "";
+ vector<char> temp_stack;
+ for (char c : str)
+ temp_stack.push_back(c);
+ while (!temp_stack.empty()) {
+ reversed_str += temp_stack.back();
+ temp_stack.pop_back();
+ }
+ if (str == reversed_str)
+ cout << "'" << str << "' is a palindrome." << endl;
+ else
+ cout << "'" << str << "' is not a palindrome." << endl;
+}
+void demonstrateOverflowUnderflow() {
+ cout << "Demonstrating Stack Overflow:" << endl;
+ while (top < MAX - 1)
+ push(1);
+ push(2);
+ cout << "\nDemonstrating Stack Underflow:" << endl;
+ while (top > -1)
+ pop();
+ pop();
+}
+int main() {
+ int choice, data;
+ do {
+ cout << "\n--- Stack Menu ---" << endl;
+ cout << "1. Push an Element" << endl;
+ cout << "2. Pop an Element" << endl;
+ cout << "3. Check Palindrome" << endl;
+ cout << "4. Demonstrate Overflow/Underflow" << endl;
+ cout << "5. Display Stack" << endl;
+ cout << "6. Exit" << endl;
+ cout << "Enter your choice: ";
+ cin >> choice;
+switch (choice) {
+ case 1:
+ cout << "Enter element to push: ";
+ cin >> data;
+ push(data);
+ break;
+ case 2:
+ pop();
+ break;
+ case 3:
+ checkPalindrome();
+ break;
+ case 4:
+ demonstrateOverflowUnderflow();
+ break;
+ case 5:
+ display();
+ break;
+ case 6:
+ cout << "Exiting program. Goodbye!" << endl;
+ break;
+ default:
+ cout << "Invalid choice. Please try again." << endl;
+ }
+ } while (choice != 6);
+ return 0;
+}
