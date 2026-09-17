@@ -1,0 +1,121 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class Node {
+public:
+ string song;
+ Node* next;
+ Node(string song_name) {
+ song = song_name;
+ next = nullptr;
+ }
+};
+class Playlist {
+private:
+ Node* head;
+public:
+ Playlist() {
+ head = nullptr;
+ }
+ void add_song(string song_name) {
+ Node* new_song = new Node(song_name);
+ if (head == nullptr) {
+ head = new_song;
+ } else {
+ Node* current = head;
+ while (current->next != nullptr)
+ current = current->next;
+ current->next = new_song;
+ }
+ }
+ void remove_song(string song_name) {
+ Node* current = head;
+ if (current != nullptr && current->song == song_name) {
+ head = current->next;
+ delete current;
+ return;
+ }
+Node* prev = nullptr;
+ while (current != nullptr && current->song != song_name) {
+ prev = current;
+ current = current->next;
+ }
+ if (current == nullptr) {
+ cout << "'" << song_name << "' not found." << endl;
+ return;
+ }
+ prev->next = current->next;
+ delete current;
+ cout << "'" << song_name << "' removed." << endl;
+ }
+ void move_song(string song_name, int new_position) {
+ if (head == nullptr) {
+ cout << "Playlist is empty." << endl;
+ return;
+ }
+ Node* current = head;
+ Node* prev = nullptr;
+ while (current != nullptr && current->song != song_name) {
+ prev = current;
+ current = current->next;
+ }
+ if (current == nullptr) {
+ cout << "'" << song_name << "' not found." << endl;
+ return;
+ }
+ if (prev != nullptr)
+ prev->next = current->next;
+ else
+ head = current->next;
+ if (new_position <= 1) {
+ current->next = head;
+ head = current;
+ cout << "'" << song_name << "' moved to the beginning." << endl;
+ return;
+ }
+ Node* temp = head;
+ for (int i = 0; temp != nullptr && i < new_position - 2; ++i)
+ temp = temp->next;
+ if (temp == nullptr) {
+ current->next = nullptr;
+ add_song(song_name);
+ return;
+}
+ current->next = temp->next;
+ temp->next = current;
+ cout << "'" << song_name << "' moved to position "
+ << new_position << "." << endl;
+ }
+ void display_playlist() {
+ if (head == nullptr) {
+ cout << "Playlist is empty." << endl;
+ return;
+ }
+ Node* current = head;
+ int position = 1;
+ cout << "Your Playlist:" << endl;
+ while (current != nullptr) {
+ cout << position << ". " << current->song << endl;
+ current = current->next;
+ position++;
+ }
+ }
+};
+int main() {
+ Playlist my_playlist;
+ my_playlist.add_song("Bohemian Rhapsody");
+ my_playlist.add_song("Hotel California");
+ my_playlist.add_song("Stairway to Heaven");
+ my_playlist.add_song("Imagine");
+ my_playlist.display_playlist();
+ cout << "\n--- Removing 'Hotel California' ---" << endl;
+ my_playlist.remove_song("Hotel California");
+ my_playlist.display_playlist();
+ cout << "\n--- Moving 'Imagine' to position 1 ---" << endl;
+ my_playlist.move_song("Imagine", 1);
+ my_playlist.display_playlist();
+ cout << "\n--- Moving 'Bohemian Rhapsody' to position 3 ---" << endl;
+ my_playlist.move_song("Bohemian Rhapsody", 3);
+ my_playlist.display_playlist();
+ return 0;
+}
