@@ -1,0 +1,43 @@
+#include <iostream>
+using namespace std;
+int main() {
+int arr[100]; int n=0; int choice,element,position,i;
+while(true) {
+ cout << "\n--- Array Operations Menu ---" << endl;
+ cout << "1. Create an Array" << endl;
+ cout << "2. Display Array Elements" << endl;
+ cout << "3. Insert an Element" << endl;
+ cout << "4. Delete an Element" << endl;
+ cout << "5. Exit" << endl;
+ cout << "-----------------------------" << endl;
+ cout << "Enter your choice: "; cin >> choice;
+ switch(choice) {
+ case 1:
+ cout << "Enter the number of elements (up to 100): "; cin >> n;
+ if(n>100 || n<=0) { cout << "Invalid number of elements. Please enter a number between 1 and 
+100." << endl; n=0; }
+ else { cout << "Enter " << n << " integer elements:" << endl; for(i=0;i<n;i++) cin >> 
+arr[i]; cout << "Array created successfully." << endl; } break;
+ case 2:
+ if(n==0) cout << "Array is empty. Please create an array first." << endl;
+ else { cout << "Array elements: "; for(i=0;i<n;i++) cout << arr[i] << " "; cout << endl; } 
+break;
+ case 3:
+ if(n>=100) { cout << "Array is full. Cannot insert more elements." << endl; break; }
+ cout << "Enter the element to insert: "; cin >> element;
+ cout << "Enter the position to insert (1 to " << n+1 << "): "; cin >> position;
+ if(position<1 || position>n+1) cout << "Invalid position. Insertion failed." << endl;
+ else { for(i=n;i>=position;i--) arr[i]=arr[i-1]; arr[position-1]=element; n++; cout << 
+"Element inserted successfully." << endl; } break;
+ case 4:
+ if(n==0) { cout << "Array is empty. Deletion failed." << endl; break; }
+ cout << "Enter the position to delete (1 to " << n << "): "; cin >> position;
+ if(position<1 || position>n) cout << "Invalid position. Deletion failed." << endl;
+ else { for(i=position-1;i<n-1;i++) arr[i]=arr[i+1]; n--; cout << "Element deleted 
+successfully." << endl; } break;
+ case 5: cout << "Exiting program." << endl; return 0;
+ default: cout << "Invalid choice. Please try again." << endl;
+ }
+}
+return 0;
+}
