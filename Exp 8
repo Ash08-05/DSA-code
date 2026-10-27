@@ -1,0 +1,125 @@
+#include <iostream>
+#include <list>
+#include <string>
+
+using namespace std;
+
+const int TABLE_SIZE = 10;
+
+struct Student {
+    int rollNo;
+    string name;
+    float marks;
+};
+
+list<Student> hashTable[TABLE_SIZE];
+
+// Hash function to compute index
+int hashFunction(int rollNo) {
+    return rollNo % TABLE_SIZE;
+}
+
+// Insert a student record into the hash table
+void insertStudent() {
+    Student s;
+    cout << "Enter roll number: ";
+    cin >> s.rollNo;
+    cout << "Enter student name: ";
+    cin >> s.name;
+    cout << "Enter marks: ";
+    cin >> s.marks;
+
+    int index = hashFunction(s.rollNo);
+    hashTable[index].push_back(s);
+    cout << "Student record inserted successfully." << endl;
+}
+
+// Search for a student by roll number
+void searchStudent() {
+    int rollNo;
+    cout << "Enter roll number to search: ";
+    cin >> rollNo;
+
+    int index = hashFunction(rollNo);
+    for (Student s : hashTable[index]) {
+        if (s.rollNo == rollNo) {
+            cout << "Student found!" << endl;
+            cout << "Roll No: " << s.rollNo << endl;
+            cout << "Name: " << s.name << endl;
+            cout << "Marks: " << s.marks << endl;
+            return;
+        }
+    }
+    cout << "Student not found." << endl;
+}
+
+// Delete a student record by roll number
+void deleteStudent() {
+    int rollNo;
+    cout << "Enter roll number to delete: ";
+    cin >> rollNo;
+
+    int index = hashFunction(rollNo);
+    for (auto it = hashTable[index].begin(); it != hashTable[index].end(); ++it) {
+        if (it->rollNo == rollNo) {
+            hashTable[index].erase(it);
+            cout << "Student record deleted successfully." << endl;
+            return;
+        }
+    }
+    cout << "Student not found." << endl;
+}
+
+// Display the entire hash table (Separate Chaining)
+void displayTable() {
+    cout << "\n--- Hash Table ---" << endl;
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        cout << "Index " << i << ": ";
+        for (Student s : hashTable[i]) {
+            cout << "[" << s.rollNo << ", " << s.name << ", " << s.marks << "] ";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    int choice;
+
+    do {
+        cout << "\n--- Student Marks Management ---" << endl;
+        cout << "1. Insert Student" << endl;
+        cout << "2. Search Student" << endl;
+        cout << "3. Delete Student" << endl;
+        cout << "4. Display Hash Table" << endl;
+        cout << "5. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                insertStudent();
+                break;
+
+            case 2:
+                searchStudent();
+                break;
+
+            case 3:
+                deleteStudent();
+                break;
+
+            case 4:
+                displayTable();
+                break;
+
+            case 5:
+                cout << "Exiting program. Goodbye!" << endl;
+                break;
+
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
