@@ -1,0 +1,149 @@
+#include <iostream>
+#include <map>
+#include <set>
+#include <string>
+
+using namespace std;
+
+map<string, set<string>> socialNetwork;
+
+// Add a new person to the network
+void addPerson(string name) {
+    if (socialNetwork.find(name) == socialNetwork.end()) {
+        socialNetwork[name] = set<string>();
+        cout << name << " added successfully." << endl;
+    } else {
+        cout << name << " already exists." << endl;
+    }
+}
+
+// Add a bidirectional friendship
+void addFriendship(string person1, string person2) {
+    if (socialNetwork.find(person1) == socialNetwork.end() || 
+        socialNetwork.find(person2) == socialNetwork.end()) {
+        cout << "Both persons must exist in the network." << endl;
+        return;
+    }
+    
+    socialNetwork[person1].insert(person2);
+    socialNetwork[person2].insert(person1);
+    cout << "Friendship added successfully." << endl;
+}
+
+// Display the entire social graph
+void displayNetwork() {
+    cout << "\n--- Social Network ---" << endl;
+    for (auto person : socialNetwork) {
+        cout << person.first << ": ";
+        for (string friendName : person.second) {
+            cout << friendName << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Show direct friends of a specific person
+void showFriends(string name) {
+    if (socialNetwork.find(name) == socialNetwork.end()) {
+        cout << "Person not found." << endl;
+        return;
+    }
+    
+    cout << "Friends of " << name << ": ";
+    if (socialNetwork[name].empty()) {
+        cout << "No friends." << endl;
+    } else {
+        for (string friendName : socialNetwork[name]) {
+            cout << friendName << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Suggest friends based on mutual connections (Friends of Friends)
+void suggestFriends(string name) {
+    if (socialNetwork.find(name) == socialNetwork.end()) {
+        cout << "Person not found." << endl;
+        return;
+    }
+
+    map<string, int> mutualCount;
+
+    // Traverse through direct friends
+    for (string friendName : socialNetwork[name]) {
+        // Traverse through friends of friends
+        for (string suggestion : socialNetwork[friendName]) {
+            // Exclude self and existing friends
+            if (suggestion != name && socialNetwork[name].find(suggestion) == socialNetwork[name].end()) {
+                mutualCount[suggestion]++;
+            }
+        }
+    }
+
+    cout << "Friend suggestions for " << name << ":" << endl;
+    if (mutualCount.empty()) {
+        cout << "No suggestions available." << endl;
+    } else {
+        for (auto suggestion : mutualCount) {
+            cout << suggestion.first << " (" << suggestion.second << " mutual friend(s))" << endl;
+        }
+    }
+}
+
+int main() {
+    int choice;
+    string name, person1, person2;
+
+    do {
+        cout << "\n--- Social Network Menu ---" << endl;
+        cout << "1. Add Person" << endl;
+        cout << "2. Add Friendship" << endl;
+        cout << "3. Display Network" << endl;
+        cout << "4. Show Friends" << endl;
+        cout << "5. Suggest Friends" << endl;
+        cout << "6. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter person name: ";
+                cin >> name;
+                addPerson(name);
+                break;
+
+            case 2:
+                cout << "Enter first person: ";
+                cin >> person1;
+                cout << "Enter second person: ";
+                cin >> person2;
+                addFriendship(person1, person2);
+                break;
+
+            case 3:
+                displayNetwork();
+                break;
+
+            case 4:
+                cout << "Enter person name: ";
+                cin >> name;
+                showFriends(name);
+                break;
+
+            case 5:
+                cout << "Enter person name: ";
+                cin >> name;
+                suggestFriends(name);
+                break;
+
+            case 6:
+                cout << "Exiting program. Goodbye!" << endl;
+                break;
+
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 6);
+
+    return 0;
+}
