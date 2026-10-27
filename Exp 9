@@ -1,0 +1,169 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <string>
+
+using namespace std;
+
+struct Book {
+    int id;
+    string title;
+};
+
+class HashTable {
+private:
+    vector<list<Book>> table;
+    int tableSize;
+    const int prime = 1000003;
+    const int a = 31;
+    const int b = 17;
+
+    int hashFunction(int key) {
+        return ((a * key + b) % prime) % tableSize;
+    }
+
+    double loadFactor() {
+        int count = 0;
+        for (auto bucket : table) {
+            count += bucket.size();
+        }
+        return (double)count / tableSize;
+    }
+
+    void resizeTable() {
+        int oldSize = tableSize;
+        tableSize = tableSize * 2;
+        vector<list<Book>> oldTable = table;
+
+        table.clear();
+        table.resize(tableSize);
+
+        for (auto bucket : oldTable) {
+            for (Book book : bucket) {
+                int index = hashFunction(book.id);
+                table[index].push_back(book);
+            }
+        }
+
+        cout << "Hash table resized from " << oldSize << " to " << tableSize << "." << endl;
+    }
+
+public:
+    HashTable(int size = 5) {
+        tableSize = size;
+        table.resize(tableSize);
+    }
+
+    void insertBook(int id, string title) {
+        int index = hashFunction(id);
+
+        for (Book book : table[index]) {
+            if (book.id == id) {
+                cout << "Book ID already exists." << endl;
+                return;
+            }
+        }
+
+        table[index].push_back({id, title});
+        cout << "Book inserted successfully." << endl;
+
+        if (loadFactor() > 0.75) {
+            resizeTable();
+        }
+    }
+
+    void searchBook(int id) {
+        int index = hashFunction(id);
+
+        for (Book book : table[index]) {
+            if (book.id == id) {
+                cout << "Book found!" << endl;
+                cout << "Book ID: " << book.id << endl;
+                cout << "Title: " << book.title << endl;
+                return;
+            }
+        }
+
+        cout << "Book not found." << endl;
+    }
+
+    void deleteBook(int id) {
+        int index = hashFunction(id);
+
+        for (auto it = table[index].begin(); it != table[index].end(); ++it) {
+            if (it->id == id) {
+                table[index].erase(it);
+                cout << "Book deleted successfully." << endl;
+                return;
+            }
+        }
+
+        cout << "Book not found." << endl;
+    }
+
+    void displayTable() {
+        cout << "\n--- Library Hash Table ---" << endl;
+
+        for (int i = 0; i < tableSize; i++) {
+            cout << "Index " << i << ": ";
+            for (Book book : table[i]) {
+                cout << "[" << book.id << ", " << book.title << "] ";
+            }
+            cout << endl;
+        }
+
+        cout << "Load Factor: " << loadFactor() << endl;
+    }
+};
+
+int main() {
+    HashTable library;
+    int choice, id;
+    string title;
+
+    do {
+        cout << "\n--- Library Book Management ---" << endl;
+        cout << "1. Insert Book" << endl;
+        cout << "2. Search Book" << endl;
+        cout << "3. Delete Book" << endl;
+        cout << "4. Display Hash Table" << endl;
+        cout << "5. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter book ID: ";
+                cin >> id;
+                cout << "Enter book title: ";
+                cin >> title;
+                library.insertBook(id, title);
+                break;
+
+            case 2:
+                cout << "Enter book ID to search: ";
+                cin >> id;
+                library.searchBook(id);
+                break;
+
+            case 3:
+                cout << "Enter book ID to delete: ";
+                cin >> id;
+                library.deleteBook(id);
+                break;
+
+            case 4:
+                library.displayTable();
+                break;
+
+            case 5:
+                cout << "Exiting program. Goodbye!" << endl;
+                break;
+
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
