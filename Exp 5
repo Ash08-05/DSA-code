@@ -1,0 +1,134 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+struct FamilyMember {
+    string name;
+    vector<FamilyMember*> children;
+
+    FamilyMember(string memberName) {
+        name = memberName;
+    }
+};
+
+FamilyMember* root = nullptr;
+
+// Search for a family member
+FamilyMember* findMember(FamilyMember* current, string name) {
+    if (current == nullptr) return nullptr;
+    if (current->name == name) return current;
+    
+    for (FamilyMember* child : current->children) {
+        FamilyMember* result = findMember(child, name);
+        if (result != nullptr) return result;
+    }
+    return nullptr;
+}
+
+// Add a new family member
+void addMember(string parentName, string childName) {
+    FamilyMember* parent = findMember(root, parentName);
+    if (parent == nullptr) {
+        cout << "Parent not found." << endl;
+        return;
+    }
+    
+    FamilyMember* child = new FamilyMember(childName);
+    parent->children.push_back(child);
+    cout << childName << " added as child of " << parentName << "." << endl;
+}
+
+// Display family tree
+void displayTree(FamilyMember* current, int level = 0) {
+    if (current == nullptr) return;
+    
+    for (int i = 0; i < level; i++) {
+        cout << "  ";
+    }
+    cout << "|-- " << current->name << endl;
+    
+    for (FamilyMember* child : current->children) {
+        displayTree(child, level + 1);
+    }
+}
+
+// Find direct children
+void showChildren(string name) {
+    FamilyMember* member = findMember(root, name);
+    if (member == nullptr) {
+        cout << "Family member not found." << endl;
+        return;
+    }
+    
+    if (member->children.empty()) {
+        cout << name << " has no children in the tree." << endl;
+        return;
+    }
+    
+    cout << "Children of " << name << ":" << endl;
+    for (FamilyMember* child : member->children) {
+        cout << child->name << endl;
+    }
+}
+
+int main() {
+    int choice;
+    string name, parentName, childName;
+
+    cout << "Enter the name of the root family member: ";
+    cin >> name;
+    root = new FamilyMember(name);
+
+    do {
+        cout << "\n--- Family Tree Menu ---" << endl;
+        cout << "1. Add Family Member" << endl;
+        cout << "2. Search Family Member" << endl;
+        cout << "3. Display Family Tree" << endl;
+        cout << "4. Show Children" << endl;
+        cout << "5. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter parent name: ";
+                cin >> parentName;
+                cout << "Enter child name: ";
+                cin >> childName;
+                addMember(parentName, childName);
+                break;
+                
+            case 2:
+                cout << "Enter family member to search: ";
+                cin >> name;
+                if (findMember(root, name) != nullptr) {
+                    cout << name << " found in the family tree." << endl;
+                } else {
+                    cout << name << " not found in the family tree." << endl;
+                }
+                break;
+                
+            case 3:
+                cout << "\nFamily Tree:" << endl;
+                displayTree(root);
+                break;
+                
+            case 4:
+                cout << "Enter member name: ";
+                cin >> name;
+                showChildren(name);
+                break;
+                
+            case 5:
+                cout << "Exiting program. Goodbye!" << endl;
+                break;
+                
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
